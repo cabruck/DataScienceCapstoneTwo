@@ -13987,10 +13987,12 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[1]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">import</span> <span class="nn">seaborn</span> <span class="k">as</span> <span class="nn">sns</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="c1">#import seaborn as sns</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">from</span> <span class="nn">sklearn.model_selection</span> <span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">from</span> <span class="nn">sklearn.utils</span> <span class="kn">import</span> <span class="n">resample</span>
 </pre></div>
 
      </div>
@@ -14009,7 +14011,8 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[2]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ps_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../data/data_cleaning_step2.zip&#39;</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># also set probeset_id as the index.  Will propagate to all derived dataframes.</span>
+<span class="n">ps_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s1">&#39;../data/data_cleaning_step2.zip&#39;</span><span class="p">,</span><span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">index_col</span> <span class="o">=</span> <span class="s1">&#39;probeset_id&#39;</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -14023,7 +14026,7 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[3]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ps_data</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="o">.</span><span class="n">transpose</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ps_data</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
 </pre></div>
 
      </div>
@@ -14061,27 +14064,17 @@ a.anchor-link {
 <table border="1" class="dataframe">
   <thead>
     <tr style="text-align: right;">
-      <th></th>
-      <th>0</th>
-      <th>1</th>
-      <th>2</th>
-      <th>3</th>
-      <th>4</th>
-      <th>5</th>
-      <th>6</th>
+      <th>probeset_id</th>
+      <th>AX-100003653</th>
+      <th>AX-100004573</th>
+      <th>AX-100004941</th>
+      <th>AX-100006840</th>
+      <th>AX-100007392</th>
+      <th>AX-100007701</th>
+      <th>AX-100008742</th>
     </tr>
   </thead>
   <tbody>
-    <tr>
-      <th>probeset_id</th>
-      <td>AX-100003653</td>
-      <td>AX-100004573</td>
-      <td>AX-100004941</td>
-      <td>AX-100006840</td>
-      <td>AX-100007392</td>
-      <td>AX-100007701</td>
-      <td>AX-100008742</td>
-    </tr>
     <tr>
       <th>quality_bin</th>
       <td>high</td>
@@ -14452,6 +14445,11 @@ a.anchor-link {
       <td>42.170623</td>
     </tr>
     <tr>
+      <th>BB.varY.clean</th>
+      <td>208499</td>
+      <td>25.799383</td>
+    </tr>
+    <tr>
       <th>BB.varX.clean</th>
       <td>208499</td>
       <td>25.799383</td>
@@ -14467,19 +14465,9 @@ a.anchor-link {
       <td>25.799383</td>
     </tr>
     <tr>
-      <th>BB.varY.clean</th>
-      <td>208499</td>
-      <td>25.799383</td>
-    </tr>
-    <tr>
       <th>FLD</th>
       <td>30841</td>
       <td>3.816223</td>
-    </tr>
-    <tr>
-      <th>AB.meanY.clean</th>
-      <td>30812</td>
-      <td>3.812635</td>
     </tr>
     <tr>
       <th>AB.varY.clean</th>
@@ -14488,6 +14476,11 @@ a.anchor-link {
     </tr>
     <tr>
       <th>AB.varX.clean</th>
+      <td>30812</td>
+      <td>3.812635</td>
+    </tr>
+    <tr>
+      <th>AB.meanY.clean</th>
       <td>30812</td>
       <td>3.812635</td>
     </tr>
@@ -14507,47 +14500,7 @@ a.anchor-link {
       <td>0.003588</td>
     </tr>
     <tr>
-      <th>meanY</th>
-      <td>0</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
       <th>quality_score</th>
-      <td>0</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>OriginalCT.recommended</th>
-      <td>0</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>OriginalCT</th>
-      <td>0</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>Hom.meanY.delta</th>
-      <td>0</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>Nclus</th>
-      <td>0</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>CC</th>
-      <td>0</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>CR</th>
-      <td>0</td>
-      <td>0.000000</td>
-    </tr>
-    <tr>
-      <th>quality_bin</th>
       <td>0</td>
       <td>0.000000</td>
     </tr>
@@ -14567,7 +14520,42 @@ a.anchor-link {
       <td>0.000000</td>
     </tr>
     <tr>
-      <th>probeset_id</th>
+      <th>Nclus</th>
+      <td>0</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>meanY</th>
+      <td>0</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>Hom.meanY.delta</th>
+      <td>0</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>CR</th>
+      <td>0</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>CC</th>
+      <td>0</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>OriginalCT</th>
+      <td>0</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>OriginalCT.recommended</th>
+      <td>0</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>quality_bin</th>
       <td>0</td>
       <td>0.000000</td>
     </tr>
@@ -14599,7 +14587,7 @@ a.anchor-link {
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># count of probesets in each group that I want to split into test/train sets by same proportion</span>
-<span class="n">ps_data</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;OriginalCT&#39;</span><span class="p">],</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;quality_bin&#39;</span><span class="p">],</span><span class="n">values</span><span class="o">=</span><span class="s1">&#39;probeset_id&#39;</span><span class="p">,</span><span class="n">aggfunc</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">)</span> \
+<span class="n">ps_data</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;OriginalCT&#39;</span><span class="p">],</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;quality_bin&#39;</span><span class="p">],</span><span class="n">values</span><span class="o">=</span><span class="s1">&#39;CR&#39;</span><span class="p">,</span><span class="n">aggfunc</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">)</span> \
        <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;high&#39;</span><span class="p">,</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)[[</span><span class="s1">&#39;high&#39;</span><span class="p">,</span><span class="s1">&#39;marginal&#39;</span><span class="p">,</span><span class="s1">&#39;low&#39;</span><span class="p">]]</span>
 </pre></div>
 
@@ -14758,7 +14746,7 @@ a.anchor-link {
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[7]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ps_data</span><span class="p">[[</span><span class="s1">&#39;probeset_id&#39;</span><span class="p">,</span><span class="s1">&#39;CC&#39;</span><span class="p">,</span><span class="s1">&#39;CR&#39;</span><span class="p">,</span><span class="s1">&#39;quality_bin&#39;</span><span class="p">,</span><span class="s1">&#39;quality_binary&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ps_data</span><span class="p">[[</span><span class="s1">&#39;CC&#39;</span><span class="p">,</span><span class="s1">&#39;CR&#39;</span><span class="p">,</span><span class="s1">&#39;quality_bin&#39;</span><span class="p">,</span><span class="s1">&#39;quality_binary&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">7</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -14797,65 +14785,64 @@ a.anchor-link {
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>probeset_id</th>
       <th>CC</th>
       <th>CR</th>
       <th>quality_bin</th>
       <th>quality_binary</th>
     </tr>
+    <tr>
+      <th>probeset_id</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
   </thead>
   <tbody>
     <tr>
-      <th>0</th>
-      <td>AX-100003653</td>
+      <th>AX-100003653</th>
       <td>0.996</td>
       <td>98.913</td>
       <td>high</td>
       <td>good</td>
     </tr>
     <tr>
-      <th>1</th>
-      <td>AX-100004573</td>
+      <th>AX-100004573</th>
       <td>0.953</td>
       <td>97.464</td>
       <td>low</td>
       <td>bad</td>
     </tr>
     <tr>
-      <th>2</th>
-      <td>AX-100004941</td>
+      <th>AX-100004941</th>
       <td>1.000</td>
       <td>100.000</td>
       <td>high</td>
       <td>good</td>
     </tr>
     <tr>
-      <th>3</th>
-      <td>AX-100006840</td>
+      <th>AX-100006840</th>
       <td>0.975</td>
       <td>98.188</td>
       <td>low</td>
       <td>bad</td>
     </tr>
     <tr>
-      <th>4</th>
-      <td>AX-100007392</td>
+      <th>AX-100007392</th>
       <td>0.996</td>
       <td>100.000</td>
       <td>high</td>
       <td>good</td>
     </tr>
     <tr>
-      <th>5</th>
-      <td>AX-100007701</td>
+      <th>AX-100007701</th>
       <td>0.963</td>
       <td>99.638</td>
       <td>low</td>
       <td>bad</td>
     </tr>
     <tr>
-      <th>6</th>
-      <td>AX-100008742</td>
+      <th>AX-100008742</th>
       <td>0.989</td>
       <td>100.000</td>
       <td>marginal</td>
@@ -14879,7 +14866,7 @@ a.anchor-link {
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># count of probesets in each OriginalCT &amp; quality_binary group that I want to split into test/train sets by same proportion</span>
-<span class="n">ps_data</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;OriginalCT&#39;</span><span class="p">],</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;quality_binary&#39;</span><span class="p">],</span><span class="n">values</span><span class="o">=</span><span class="s1">&#39;probeset_id&#39;</span><span class="p">,</span><span class="n">aggfunc</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">)</span> \
+<span class="n">ps_data</span><span class="o">.</span><span class="n">pivot_table</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;OriginalCT&#39;</span><span class="p">],</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;quality_binary&#39;</span><span class="p">],</span><span class="n">values</span><span class="o">=</span><span class="s1">&#39;CR&#39;</span><span class="p">,</span><span class="n">aggfunc</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">)</span> \
        <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;good&#39;</span><span class="p">,</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)[[</span><span class="s1">&#39;good&#39;</span><span class="p">,</span><span class="s1">&#39;bad&#39;</span><span class="p">]]</span>
 </pre></div>
 
@@ -15000,13 +14987,20 @@ a.anchor-link {
 
 </div>
 
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="3.2.2-Make-stratification-column-to-prepare-for-train-test-splitting">3.2.2 Make stratification column to prepare for train-test splitting<a class="anchor-link" href="#3.2.2-Make-stratification-column-to-prepare-for-train-test-splitting">&#182;</a></h3><p>Because I want preserve proportions of the imbalanced classes when doing a train-test split, I want to stratify the split by BOTH 'OriginalCT' and 'quality_binary'.  However, stratification feature works more predictably if there's a single stratification column.  Therefore, let's concatenate these two string columns.</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[9]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ps_data</span><span class="p">[[</span><span class="s1">&#39;quality_binary&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ps_data_stratifier</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;OriginalCTquality_binary&#39;</span><span class="p">])</span>
+<span class="n">ps_data_stratifier</span><span class="p">[</span><span class="s1">&#39;OriginalCTquality_binary&#39;</span><span class="p">]</span><span class="o">=</span><span class="n">ps_data</span><span class="p">[</span><span class="s1">&#39;OriginalCT&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">ps_data</span><span class="p">[</span><span class="s1">&#39;quality_binary&#39;</span><span class="p">]</span>
 </pre></div>
 
      </div>
@@ -15014,46 +15008,13 @@ a.anchor-link {
 </div>
 </div>
 
-<div class="jp-Cell-outputWrapper">
-
-
-<div class="jp-OutputArea jp-Cell-outputArea">
-
-<div class="jp-OutputArea-child">
-
-    
-    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[9]:</div>
-
-
-
-
-<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
-<pre>quality_binary
-good              773625
-bad                34530
-dtype: int64</pre>
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
-</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h3 id="3.2.2-One-hot-encoding">3.2.2 One-hot encoding<a class="anchor-link" href="#3.2.2-One-hot-encoding">&#182;</a></h3><p>"Avoid OneHot for decision tree-based algorithms."</p>
-<p>So maybe I shouldn't do this yet?</p>
-
-</div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[10]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ps_data</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ps_data_stratifier</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 
      </div>
@@ -15092,18 +15053,117 @@ dtype: int64</pre>
   <thead>
     <tr style="text-align: right;">
       <th></th>
+      <th>OriginalCTquality_binary</th>
+    </tr>
+    <tr>
       <th>probeset_id</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>AX-100003653</th>
+      <td>PolyHighResolution.good</td>
+    </tr>
+    <tr>
+      <th>AX-100004573</th>
+      <td>Other.bad</td>
+    </tr>
+    <tr>
+      <th>AX-100004941</th>
+      <td>MonoHighResolution.good</td>
+    </tr>
+    <tr>
+      <th>AX-100006840</th>
+      <td>PolyHighResolution.bad</td>
+    </tr>
+    <tr>
+      <th>AX-100007392</th>
+      <td>PolyHighResolution.good</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h3 id="3.2.3-One-hot-encoding">3.2.3 One-hot encoding<a class="anchor-link" href="#3.2.3-One-hot-encoding">&#182;</a></h3><p>"Avoid OneHot for decision tree-based algorithms." 
+<a href="https://web.archive.org/web/20200924113639/https://roamanalytics.com/2016/10/28/are-categorical-variables-getting-lost-in-your-random-forests/">https://web.archive.org/web/20200924113639/https://roamanalytics.com/2016/10/28/are-categorical-variables-getting-lost-in-your-random-forests/</a></p>
+<p>So maybe I shouldn't do this yet?</p>
+<p>But I think sklearn requires one-hot encoding for decision tree algorithms.</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[11]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ps_data</span><span class="o">.</span><span class="n">select_dtypes</span><span class="p">(</span><span class="n">exclude</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[11]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
       <th>quality_bin</th>
       <th>OriginalCT.recommended</th>
       <th>OriginalCT</th>
       <th>Nclus</th>
       <th>quality_binary</th>
     </tr>
+    <tr>
+      <th>probeset_id</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
   </thead>
   <tbody>
     <tr>
-      <th>0</th>
-      <td>AX-100003653</td>
+      <th>AX-100003653</th>
       <td>high</td>
       <td>True</td>
       <td>PolyHighResolution</td>
@@ -15111,8 +15171,7 @@ dtype: int64</pre>
       <td>good</td>
     </tr>
     <tr>
-      <th>1</th>
-      <td>AX-100004573</td>
+      <th>AX-100004573</th>
       <td>low</td>
       <td>False</td>
       <td>Other</td>
@@ -15120,8 +15179,7 @@ dtype: int64</pre>
       <td>bad</td>
     </tr>
     <tr>
-      <th>2</th>
-      <td>AX-100004941</td>
+      <th>AX-100004941</th>
       <td>high</td>
       <td>True</td>
       <td>MonoHighResolution</td>
@@ -15129,8 +15187,7 @@ dtype: int64</pre>
       <td>good</td>
     </tr>
     <tr>
-      <th>3</th>
-      <td>AX-100006840</td>
+      <th>AX-100006840</th>
       <td>low</td>
       <td>True</td>
       <td>PolyHighResolution</td>
@@ -15138,8 +15195,7 @@ dtype: int64</pre>
       <td>bad</td>
     </tr>
     <tr>
-      <th>4</th>
-      <td>AX-100007392</td>
+      <th>AX-100007392</th>
       <td>high</td>
       <td>True</td>
       <td>PolyHighResolution</td>
@@ -15153,11 +15209,9 @@ dtype: int64</pre>
       <td>...</td>
       <td>...</td>
       <td>...</td>
-      <td>...</td>
     </tr>
     <tr>
-      <th>808150</th>
-      <td>AX-98295628</td>
+      <th>AX-98295628</th>
       <td>low</td>
       <td>False</td>
       <td>ABvarianceY</td>
@@ -15165,8 +15219,7 @@ dtype: int64</pre>
       <td>bad</td>
     </tr>
     <tr>
-      <th>808151</th>
-      <td>AX-98295631</td>
+      <th>AX-98295631</th>
       <td>high</td>
       <td>True</td>
       <td>PolyHighResolution</td>
@@ -15174,8 +15227,7 @@ dtype: int64</pre>
       <td>good</td>
     </tr>
     <tr>
-      <th>808152</th>
-      <td>AX-98295632</td>
+      <th>AX-98295632</th>
       <td>high</td>
       <td>True</td>
       <td>PolyHighResolution</td>
@@ -15183,8 +15235,7 @@ dtype: int64</pre>
       <td>good</td>
     </tr>
     <tr>
-      <th>808153</th>
-      <td>AX-98295636</td>
+      <th>AX-98295636</th>
       <td>high</td>
       <td>True</td>
       <td>PolyHighResolution</td>
@@ -15192,8 +15243,7 @@ dtype: int64</pre>
       <td>good</td>
     </tr>
     <tr>
-      <th>808154</th>
-      <td>AX-98295645</td>
+      <th>AX-98295645</th>
       <td>high</td>
       <td>True</td>
       <td>PolyHighResolution</td>
@@ -15202,7 +15252,651 @@ dtype: int64</pre>
     </tr>
   </tbody>
 </table>
-<p>808155 rows × 6 columns</p>
+<p>808155 rows × 5 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[12]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># will drop &#39;quality_bin&#39;, so don&#39;t bother encoding</span>
+<span class="c1"># will encode Nclus, since actually categorical, not ordinal (order doesn&#39;t matter)</span>
+<span class="n">unencoded_columns</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;OriginalCT.recommended&#39;</span><span class="p">,</span> <span class="s1">&#39;OriginalCT&#39;</span><span class="p">,</span> <span class="s1">&#39;Nclus&#39;</span><span class="p">,</span> <span class="s1">&#39;quality_binary&#39;</span><span class="p">]</span>
+
+<span class="c1"># If I don&#39;t provide columns, it&#39;ll quess which to encode, and will skip OriginalCT.recommended (True/False) and Nclus</span>
+<span class="n">encoded</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">get_dummies</span><span class="p">(</span><span class="n">ps_data</span><span class="p">[</span><span class="n">unencoded_columns</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="n">unencoded_columns</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[13]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">encoded</span><span class="o">.</span><span class="n">head</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[13]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>probeset_id</th>
+      <th>AX-100003653</th>
+      <th>AX-100004573</th>
+      <th>AX-100004941</th>
+      <th>AX-100006840</th>
+      <th>AX-100007392</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>OriginalCT.recommended_False</th>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>OriginalCT.recommended_True</th>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>OriginalCT_AAvarianceX</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>OriginalCT_AAvarianceY</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>OriginalCT_ABvarianceX</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>OriginalCT_ABvarianceY</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>OriginalCT_BBvarianceX</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>OriginalCT_BBvarianceY</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>OriginalCT_CallRateBelowThreshold</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>OriginalCT_MonoHighResolution</th>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>OriginalCT_NoMinorHom</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>OriginalCT_OTV</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>OriginalCT_Other</th>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>OriginalCT_PolyHighResolution</th>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Nclus_1</th>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>Nclus_2</th>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>Nclus_3</th>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>quality_binary_bad</th>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>quality_binary_good</th>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[14]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># drop unnecessary encoded columns</span>
+<span class="n">encoded_to_drop</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;OriginalCT.recommended_False&#39;</span><span class="p">,</span><span class="s1">&#39;quality_binary_bad&#39;</span><span class="p">]</span>
+<span class="n">encoded</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">encoded_to_drop</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># let&#39;s preserve dropped original columns in a new dataset</span>
+<span class="n">ps_data_dropped</span> <span class="o">=</span> <span class="n">ps_data</span><span class="p">[</span><span class="n">unencoded_columns</span><span class="p">]</span>
+
+<span class="c1"># Replace original features with encoded features. DataFrame.join merges tables on common row indices by default.</span>
+<span class="n">ps_data</span> <span class="o">=</span> <span class="n">ps_data</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">unencoded_columns</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">encoded</span><span class="p">)</span>
+<span class="n">ps_data</span><span class="o">.</span><span class="n">head</span><span class="p">()</span><span class="o">.</span><span class="n">T</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[14]:</div>
+
+
+
+<div class="jp-RenderedHTMLCommon jp-RenderedHTML jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/html">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th>probeset_id</th>
+      <th>AX-100003653</th>
+      <th>AX-100004573</th>
+      <th>AX-100004941</th>
+      <th>AX-100006840</th>
+      <th>AX-100007392</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>quality_bin</th>
+      <td>high</td>
+      <td>low</td>
+      <td>high</td>
+      <td>low</td>
+      <td>high</td>
+    </tr>
+    <tr>
+      <th>quality_score</th>
+      <td>4.463</td>
+      <td>0.733</td>
+      <td>5.0</td>
+      <td>2.638</td>
+      <td>4.68</td>
+    </tr>
+    <tr>
+      <th>CC</th>
+      <td>0.996</td>
+      <td>0.953</td>
+      <td>1.0</td>
+      <td>0.975</td>
+      <td>0.996</td>
+    </tr>
+    <tr>
+      <th>CR</th>
+      <td>98.913</td>
+      <td>97.464</td>
+      <td>100.0</td>
+      <td>98.188</td>
+      <td>100.0</td>
+    </tr>
+    <tr>
+      <th>FLD</th>
+      <td>6.761</td>
+      <td>3.694</td>
+      <td>NaN</td>
+      <td>4.352</td>
+      <td>6.359</td>
+    </tr>
+    <tr>
+      <th>HetSO</th>
+      <td>0.745</td>
+      <td>-0.28</td>
+      <td>NaN</td>
+      <td>0.421</td>
+      <td>0.36</td>
+    </tr>
+    <tr>
+      <th>MMD</th>
+      <td>36.317</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>29.674</td>
+      <td>47.444</td>
+    </tr>
+    <tr>
+      <th>het_frac</th>
+      <td>0.238095</td>
+      <td>0.026022</td>
+      <td>0.0</td>
+      <td>0.092251</td>
+      <td>0.105072</td>
+    </tr>
+    <tr>
+      <th>MinorAlleleFrequency</th>
+      <td>0.145</td>
+      <td>0.013</td>
+      <td>0.0</td>
+      <td>0.061</td>
+      <td>0.056</td>
+    </tr>
+    <tr>
+      <th>H.W.p-Value</th>
+      <td>0.469615</td>
+      <td>1.0</td>
+      <td>1.0</td>
+      <td>0.010957</td>
+      <td>0.590233</td>
+    </tr>
+    <tr>
+      <th>AA.meanX.clean</th>
+      <td>2.649</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2.14</td>
+      <td>2.31</td>
+    </tr>
+    <tr>
+      <th>AB.meanX.abs_clean</th>
+      <td>0.283</td>
+      <td>0.8</td>
+      <td>NaN</td>
+      <td>0.6</td>
+      <td>0.095</td>
+    </tr>
+    <tr>
+      <th>BB.meanX.clean</th>
+      <td>-2.685</td>
+      <td>0.05</td>
+      <td>-1.332</td>
+      <td>-1.778</td>
+      <td>-2.964</td>
+    </tr>
+    <tr>
+      <th>HomRO</th>
+      <td>2.649</td>
+      <td>-0.05</td>
+      <td>1.332</td>
+      <td>1.778</td>
+      <td>2.31</td>
+    </tr>
+    <tr>
+      <th>AA.meanY.clean</th>
+      <td>9.449</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>9.366</td>
+      <td>10.681</td>
+    </tr>
+    <tr>
+      <th>AB.meanY.clean</th>
+      <td>10.155</td>
+      <td>10.206</td>
+      <td>NaN</td>
+      <td>9.599</td>
+      <td>11.027</td>
+    </tr>
+    <tr>
+      <th>BB.meanY.clean</th>
+      <td>9.36</td>
+      <td>10.534</td>
+      <td>10.195</td>
+      <td>8.886</td>
+      <td>10.647</td>
+    </tr>
+    <tr>
+      <th>meanY</th>
+      <td>9.615</td>
+      <td>10.526</td>
+      <td>10.195</td>
+      <td>8.959</td>
+      <td>10.687</td>
+    </tr>
+    <tr>
+      <th>Hom.meanY.delta</th>
+      <td>0.089</td>
+      <td>0.21</td>
+      <td>0.133</td>
+      <td>0.48</td>
+      <td>0.035</td>
+    </tr>
+    <tr>
+      <th>AA.varX.clean</th>
+      <td>0.379</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.03</td>
+      <td>0.03</td>
+    </tr>
+    <tr>
+      <th>AB.varX.clean</th>
+      <td>0.204</td>
+      <td>0.112</td>
+      <td>NaN</td>
+      <td>0.313</td>
+      <td>0.275</td>
+    </tr>
+    <tr>
+      <th>BB.varX.clean</th>
+      <td>0.411</td>
+      <td>0.197</td>
+      <td>0.199</td>
+      <td>0.344</td>
+      <td>0.378</td>
+    </tr>
+    <tr>
+      <th>AA.varY.clean</th>
+      <td>0.253</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>0.03</td>
+      <td>0.03</td>
+    </tr>
+    <tr>
+      <th>AB.varY.clean</th>
+      <td>0.192</td>
+      <td>0.271</td>
+      <td>NaN</td>
+      <td>0.257</td>
+      <td>0.151</td>
+    </tr>
+    <tr>
+      <th>BB.varY.clean</th>
+      <td>0.25</td>
+      <td>0.216</td>
+      <td>0.128</td>
+      <td>0.26</td>
+      <td>0.243</td>
+    </tr>
+    <tr>
+      <th>OriginalCT.recommended_True</th>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>OriginalCT_AAvarianceX</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>OriginalCT_AAvarianceY</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>OriginalCT_ABvarianceX</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>OriginalCT_ABvarianceY</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>OriginalCT_BBvarianceX</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>OriginalCT_BBvarianceY</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>OriginalCT_CallRateBelowThreshold</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>OriginalCT_MonoHighResolution</th>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>OriginalCT_NoMinorHom</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>OriginalCT_OTV</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>OriginalCT_Other</th>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>OriginalCT_PolyHighResolution</th>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>Nclus_1</th>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>Nclus_2</th>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>Nclus_3</th>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>quality_binary_good</th>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
 </div>
 </div>
 
@@ -15226,11 +15920,11 @@ dtype: int64</pre>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[15]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">columns_to_drop</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CC&#39;</span><span class="p">,</span><span class="s1">&#39;quality_score&#39;</span><span class="p">,</span><span class="s1">&#39;quality_bin&#39;</span><span class="p">]</span>
-<span class="c1">#ps_data.drop(columns=columns_to_drop, inplace=True)</span>
+<span class="n">ps_data</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">columns_to_drop</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -15238,36 +15932,102 @@ dtype: int64</pre>
 </div>
 </div>
 
-</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[16]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span> 
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ps_data</span><span class="o">.</span><span class="n">dtypes</span>
 </pre></div>
 
      </div>
 </div>
 </div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[16]:</div>
+
+
+
+
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
+<pre>CR                                   float64
+FLD                                  float64
+HetSO                                float64
+MMD                                  float64
+het_frac                             float64
+MinorAlleleFrequency                 float64
+H.W.p-Value                          float64
+AA.meanX.clean                       float64
+AB.meanX.abs_clean                   float64
+BB.meanX.clean                       float64
+HomRO                                float64
+AA.meanY.clean                       float64
+AB.meanY.clean                       float64
+BB.meanY.clean                       float64
+meanY                                float64
+Hom.meanY.delta                      float64
+AA.varX.clean                        float64
+AB.varX.clean                        float64
+BB.varX.clean                        float64
+AA.varY.clean                        float64
+AB.varY.clean                        float64
+BB.varY.clean                        float64
+OriginalCT.recommended_True            uint8
+OriginalCT_AAvarianceX                 uint8
+OriginalCT_AAvarianceY                 uint8
+OriginalCT_ABvarianceX                 uint8
+OriginalCT_ABvarianceY                 uint8
+OriginalCT_BBvarianceX                 uint8
+OriginalCT_BBvarianceY                 uint8
+OriginalCT_CallRateBelowThreshold      uint8
+OriginalCT_MonoHighResolution          uint8
+OriginalCT_NoMinorHom                  uint8
+OriginalCT_OTV                         uint8
+OriginalCT_Other                       uint8
+OriginalCT_PolyHighResolution          uint8
+Nclus_1                                uint8
+Nclus_2                                uint8
+Nclus_3                                uint8
+quality_binary_good                    uint8
+dtype: object</pre>
+</div>
+
+</div>
+
+</div>
+
 </div>
 
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="3.3-split-into-train-and-test-sets">3.3 split into train and test sets<a class="anchor-link" href="#3.3-split-into-train-and-test-sets">&#182;</a></h2><p><a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html">https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html</a></p>
+<h2 id="3.3-Split-into-train-and-test-sets">3.3 Split into train and test sets<a class="anchor-link" href="#3.3-Split-into-train-and-test-sets">&#182;</a></h2><p><a href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html">https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.train_test_split.html</a></p>
 <p>"stratify" on two columns
 <a href="https://stackoverflow.com/questions/45516424/sklearn-train-test-split-on-pandas-stratify-by-multiple-columns">https://stackoverflow.com/questions/45516424/sklearn-train-test-split-on-pandas-stratify-by-multiple-columns</a></p>
-<p>it sounds like the strategy should be to create new column concatenating OriginalCT &amp; quality_binary, and stratify on new column when splitting.</p>
+<p>It sounds like the strategy should be to create new column concatenating OriginalCT &amp; quality_binary, and stratify on new column when splitting.</p>
 
 </div>
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
-<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[17]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span> 
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># Don&#39;t forget to define your X (features) and y (predictor)</span>
+<span class="n">X</span> <span class="o">=</span> <span class="n">ps_data</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;quality_binary_good&#39;</span><span class="p">])</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">ps_data</span><span class="p">[</span><span class="s1">&#39;quality_binary_good&#39;</span><span class="p">]</span>
+
+<span class="n">X_train</span><span class="p">,</span> <span class="n">X_test</span><span class="p">,</span> <span class="n">y_train</span><span class="p">,</span> <span class="n">y_test</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">,</span> <span class="n">stratify</span><span class="o">=</span><span class="n">ps_data_stratifier</span><span class="p">)</span>
 </pre></div>
 
      </div>
@@ -15275,19 +16035,465 @@ dtype: int64</pre>
 </div>
 </div>
 
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[18]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="nb">type</span><span class="p">(</span><span class="n">X_train</span><span class="p">),</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="n">y_train</span><span class="p">),</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[18]:</div>
+
+
+
+
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
+<pre>(pandas.core.frame.DataFrame,
+ (808155, 38),
+ pandas.core.series.Series,
+ (808155,))</pre>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[19]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">X_train</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">y_train</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">X_test</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">y_test</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[19]:</div>
+
+
+
+
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
+<pre>((565708, 38), (565708,), (242447, 38), (242447,))</pre>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
 </div>
 <div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
 </div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
-<h2 id="3.4-normalization">3.4 normalization<a class="anchor-link" href="#3.4-normalization">&#182;</a></h2><p>may not do this until part of specific model pipeline</p>
+<h2 id="3.4-Subsample-to-balance-the-good/bad-classes">3.4 Subsample to balance the good/bad classes<a class="anchor-link" href="#3.4-Subsample-to-balance-the-good/bad-classes">&#182;</a></h2>
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[20]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># relative difference in good vs bad category probesets</span>
+<span class="c1"># y_train is Series of quality_binary_good values</span>
+<span class="n">train_good</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">y_train</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">train_bad</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">y_train</span><span class="o">==</span><span class="mi">0</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">train_good</span><span class="p">,</span><span class="s1">&#39; / &#39;</span><span class="p">,</span><span class="n">train_bad</span><span class="p">,</span> <span class="s1">&#39; = &#39;</span><span class="p">,</span><span class="n">train_good</span><span class="o">/</span><span class="n">train_bad</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>541536  /  24172  =  22.403441999007114
+</pre>
+</div>
+</div>
 
 </div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<p>22.4 good for every 1 bad probeset is pretty imbalanced when training models.  Prefer maximum imbalance of about 1.5:1  (60:40).  There seems to be enough good probesets that can subsample only the good probesets in the training set.</p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[21]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># if retain every 1/15 &quot;good&quot; data point, the proportion of good to bad observations is about 1.5:1</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">train_good</span><span class="o">/</span><span class="mi">15</span><span class="p">,</span><span class="s1">&#39; / &#39;</span><span class="p">,</span><span class="n">train_bad</span><span class="p">,</span> <span class="s1">&#39; = &#39;</span><span class="p">,(</span><span class="n">train_good</span><span class="o">/</span><span class="mi">15</span><span class="p">)</span><span class="o">/</span><span class="n">train_bad</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>36102.4  /  24172  =  1.4935627999338077
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[22]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">y_train</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[22]:</div>
+
+
+
+
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
+<pre>probeset_id
+AX-34925385     1
+AX-152970946    1
+AX-41872981     1
+AX-36809499     1
+AX-148865368    1
+Name: quality_binary_good, dtype: uint8</pre>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[23]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1"># sklearn.utils.resample(*arrays, replace=True, n_samples=None, random_state=None, stratify=None)</span>
+<span class="c1"># want to subsample only quality_binary_good = 1 rows (y_train==1), keeping about 1/15 rows (36102 probesets)</span>
+<span class="n">X_train_subsample1</span><span class="p">,</span> <span class="n">y_train_subsample1</span> <span class="o">=</span> <span class="n">resample</span><span class="p">(</span><span class="n">X_train</span><span class="p">[</span><span class="n">y_train</span><span class="o">==</span><span class="mi">1</span><span class="p">],</span> \
+                                                <span class="n">y_train</span><span class="p">[</span><span class="n">y_train</span><span class="o">==</span><span class="mi">1</span><span class="p">],</span> \
+                                                <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">n_samples</span><span class="o">=</span><span class="mi">36102</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="mi">42</span><span class="p">)</span>
+
+<span class="c1"># then concatenate back on all the quality_binary_good = 0 rows.</span>
+<span class="c1"># do for both X_train and y_train !</span>
+<span class="c1"># pandas.concat(objs, axis=0, join=&#39;outer&#39;, ignore_index=False, keys=None, levels=None, names=None, verify_integrity=False, sort=False, copy=True)</span>
+<span class="n">X_train_subsample</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">X_train_subsample1</span><span class="p">,</span><span class="n">X_train</span><span class="p">[</span><span class="n">y_train</span><span class="o">==</span><span class="mi">0</span><span class="p">]],</span><span class="n">verify_integrity</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">y_train_subsample</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">y_train_subsample1</span><span class="p">,</span><span class="n">y_train</span><span class="p">[</span><span class="n">y_train</span><span class="o">==</span><span class="mi">0</span><span class="p">]],</span><span class="n">verify_integrity</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">X_train_subsample1</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">X_train</span><span class="p">[</span><span class="n">y_train</span><span class="o">==</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">X_train_subsample</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_train_subsample1</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_train</span><span class="p">[</span><span class="n">y_train</span><span class="o">==</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_train_subsample</span><span class="p">)</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[23]:</div>
+
+
+
+
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
+<pre>((36102, 38), (24172, 38), (60274, 38), 36102, 24172, 60274)</pre>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[24]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">y_train</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[24]:</div>
+
+
+
+
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
+<pre>probeset_id
+AX-34925385     1
+AX-152970946    1
+AX-41872981     1
+AX-36809499     1
+AX-148865368    1
+Name: quality_binary_good, dtype: uint8</pre>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h2 id="3.4-(No-Normalization)">3.4 (No Normalization)<a class="anchor-link" href="#3.4-(No-Normalization)">&#182;</a></h2><p>may not do this until part of specific model pipeline</p>
+
+</div>
+</div>
+<div class="jp-Cell-inputWrapper"><div class="jp-InputPrompt jp-InputArea-prompt">
+</div><div class="jp-RenderedHTMLCommon jp-RenderedMarkdown jp-MarkdownOutput " data-mime-type="text/markdown">
+<h2 id="3.-Save-to-zip">3. Save to zip<a class="anchor-link" href="#3.-Save-to-zip">&#182;</a></h2><p><a href="https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_csv.html">https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.to_csv.html</a></p>
+
+</div>
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[25]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="o">%</span><span class="k">whos</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt"></div>
+
+
+<div class="jp-RenderedText jp-OutputArea-output" data-mime-type="text/plain">
+<pre>Variable             Type         Data/Info
+-------------------------------------------
+X                    DataFrame                       CR    &lt;...&gt;808155 rows x 38 columns]
+X_test               DataFrame                      CR     &lt;...&gt;242447 rows x 38 columns]
+X_train              DataFrame                       CR    &lt;...&gt;565708 rows x 38 columns]
+X_train_subsample    DataFrame                       CR    &lt;...&gt;[60274 rows x 38 columns]
+X_train_subsample1   DataFrame                       CR    &lt;...&gt;[36102 rows x 38 columns]
+columns_to_drop      list         n=3
+encoded              DataFrame                  OriginalCT.&lt;...&gt;808155 rows x 17 columns]
+encoded_to_drop      list         n=2
+missing              DataFrame                            c&lt;...&gt;     208499     25.799383
+np                   module       &lt;module &#39;numpy&#39; from &#39;/Us&lt;...&gt;kages/numpy/__init__.py&#39;&gt;
+os                   module       &lt;module &#39;os&#39; from &#39;/Users&lt;...&gt;ard/lib/python3.8/os.py&#39;&gt;
+pd                   module       &lt;module &#39;pandas&#39; from &#39;/U&lt;...&gt;ages/pandas/__init__.py&#39;&gt;
+ps_data              DataFrame                       CR    &lt;...&gt;808155 rows x 39 columns]
+ps_data_dropped      DataFrame                  OriginalCT.&lt;...&gt;[808155 rows x 4 columns]
+ps_data_stratifier   DataFrame                 OriginalCTqu&lt;...&gt;[808155 rows x 1 columns]
+resample             function     &lt;function resample at 0x7fe2b03008b0&gt;
+train_bad            int          24172
+train_good           int          541536
+train_test_split     function     &lt;function train_test_split at 0x7fe2b0322f70&gt;
+unencoded_columns    list         n=4
+y                    Series       probeset_id\nAX-100003653&lt;...&gt;gth: 808155, dtype: uint8
+y_test               Series       probeset_id\nAX-12885485 &lt;...&gt;gth: 242447, dtype: uint8
+y_train              Series       probeset_id\nAX-34925385 &lt;...&gt;gth: 565708, dtype: uint8
+y_train_subsample    Series       probeset_id\nAX-16971069 &lt;...&gt;ngth: 60274, dtype: uint8
+y_train_subsample1   Series       probeset_id\nAX-16971069 &lt;...&gt;ngth: 36102, dtype: uint8
+</pre>
+</div>
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[26]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[26]:</div>
+
+
+
+
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
+<pre>&#39;/Users/Carsten/OneDrive/Documents/Springboard/git_repositories/DataScienceCapstoneTwo/notebooks&#39;</pre>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div><div class="jp-Cell jp-CodeCell jp-Notebook-cell   ">
+<div class="jp-Cell-inputWrapper">
+<div class="jp-InputArea jp-Cell-inputArea">
+<div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[32]:</div>
+<div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
+     <div class="CodeMirror cm-s-jupyter">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="s1">&#39;../data&#39;</span><span class="p">)</span>
+<span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+</pre></div>
+
+     </div>
+</div>
+</div>
+</div>
+
+<div class="jp-Cell-outputWrapper">
+
+
+<div class="jp-OutputArea jp-Cell-outputArea">
+
+<div class="jp-OutputArea-child">
+
+    
+    <div class="jp-OutputPrompt jp-OutputArea-prompt">Out[32]:</div>
+
+
+
+
+<div class="jp-RenderedText jp-OutputArea-output jp-OutputArea-executeResult" data-mime-type="text/plain">
+<pre>&#39;/Users/Carsten/OneDrive/Documents/Springboard/git_repositories/DataScienceCapstoneTwo/data&#39;</pre>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
 </div><div class="jp-Cell jp-CodeCell jp-Notebook-cell jp-mod-noOutputs  ">
 <div class="jp-Cell-inputWrapper">
 <div class="jp-InputArea jp-Cell-inputArea">
 <div class="jp-InputPrompt jp-InputArea-prompt">In&nbsp;[&nbsp;]:</div>
 <div class="jp-CodeMirrorEditor jp-Editor jp-InputArea-editor" data-type="inline">
      <div class="CodeMirror cm-s-jupyter">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">ps_data</span><span class="o">.</span><span class="n">describe</span><span class="p">()</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s1">&#39;count&#39;</span><span class="p">,</span><span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="c1">#compression_opts = dict(method=&#39;zip&#39;,archive_name=&#39;X_train_subsample.tsv&#39;)</span>
+<span class="n">X_train_subsample</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;X_train_subsample.zip&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span><span class="s1">&#39;zip&#39;</span><span class="p">,</span><span class="s1">&#39;archive_name&#39;</span><span class="p">:</span><span class="s1">&#39;X_train_subsample.tsv&#39;</span><span class="p">})</span>
+<span class="n">y_train_subsample</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;y_train_subsample.zip&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span><span class="s1">&#39;zip&#39;</span><span class="p">,</span><span class="s1">&#39;archive_name&#39;</span><span class="p">:</span><span class="s1">&#39;y_train_subsample.tsv&#39;</span><span class="p">})</span>
+<span class="n">X_train</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;X_train.zip&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span><span class="s1">&#39;zip&#39;</span><span class="p">,</span><span class="s1">&#39;archive_name&#39;</span><span class="p">:</span><span class="s1">&#39;X_train.tsv&#39;</span><span class="p">})</span>
+<span class="n">y_train</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;y_train.zip&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span><span class="s1">&#39;zip&#39;</span><span class="p">,</span><span class="s1">&#39;archive_name&#39;</span><span class="p">:</span><span class="s1">&#39;y_train.tsv&#39;</span><span class="p">})</span>
+<span class="n">X_test</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;X_test.zip&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span><span class="s1">&#39;zip&#39;</span><span class="p">,</span><span class="s1">&#39;archive_name&#39;</span><span class="p">:</span><span class="s1">&#39;X_test.tsv&#39;</span><span class="p">})</span>
+<span class="n">y_test</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="s1">&#39;y_test.zip&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;method&#39;</span><span class="p">:</span><span class="s1">&#39;zip&#39;</span><span class="p">,</span><span class="s1">&#39;archive_name&#39;</span><span class="p">:</span><span class="s1">&#39;y_test.tsv&#39;</span><span class="p">})</span>
 </pre></div>
 
      </div>
